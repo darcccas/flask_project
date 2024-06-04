@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Straipsniai</h1>
+<br>
+{% for book in books %}
+<h3>{{ book.title }}</h3>
+<p>{{ book.data }}, <i>{{ book.author }}</i></p>
+<hr>
+<p>{{ book.text[:3] }}<a href="{{ url_for('one_book', book=book.title) }}">...skaityti toliau</a></p>
+<br><br>
+{% endfor %}
+<h1><a href="{{ url_for('add_article') }}"> Rašyti straipsnį</a></h1>
+
+
+<a type="button" class="btn btn-danger" href="{{ url_for('home') }}">BACK</a>
+{% endblock %}

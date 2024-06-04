@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2> {{ names }} </h2>
+<h3> {{ ages }} </h3>
+<h1>{{values}}</h1>
+
+<h1>People names: </h1>
+{%for name in names%}
+<p>{{name}}</p>
+{% endfor %}
+
+<h1>People age: </h1>
+{%for age in ages%}
+<p>{{age}}</p>
+{% endfor %}
+
+<h1>People value: </h1>
+{%for value in values%}
+<p>{{value}}</p>
+{% endfor %}
+
+<a type="button" class="btn btn-danger" href="http://127.0.0.1:5000/to_do">BACK</a>
+{% endblock %}
