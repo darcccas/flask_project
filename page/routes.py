@@ -1,13 +1,13 @@
-from flask import render_template, request, jsonify
+from flask import jsonify, render_template, request
 
 from page import app
-from page.data import data
-from page.data import Book
+from page.data import Book, data
 from page.forms import ContactForm
-from page.models import Author
+from page.models import Author, Book, Publisher
+from page.year import is_year_leap
 
 
-@app.route('/')
+@app.route("/")
 def home():
     return render_template("home.html")
 
@@ -30,48 +30,54 @@ def user():
     return render_template("index.html")
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        vardas = request.form['vardas']
+        vardas = request.form["vardas"]
         return render_template("greetings.html", vardas=vardas)
 
     return render_template("login.html")
 
 
-@app.route("/years", methods=['GET', 'POST'])
+@app.route("/years", methods=["GET", "POST"])
 def years():
     # if request.method == "POST":
     #     year = request.form['year']
     #     result = is_year_leap(year)
-    return render_template('years.html')
+    return render_template("years.html")
 
 
 @app.route("/to_do")
 def to_do():
     return render_template("to_do.html")
 
+
 @app.route("/books")
 def books():
     books = data
     return render_template("books.html", books=books)
+
 
 @app.route("/books/<book>")
 def one_book(book):
     result = [b for b in data if b.title == book][0]
     return render_template("book.html", book=result)
 
-@app.route("/api/books/<id>", methods=['GET'])
-def author_api(id):
-    author = Author.query.get(id)
-    if author:
-        print(author)
-    #     return jsonify(author)
-    # else:
-    #     return jsonify({'result': "AUTHOR NOT FIND"})
+
+@app.route("/api/books/all", methods=["GET"])
+def author_api():
+    author = Author.query.all()
+    book = Book.query.all()
+    publisher = Publisher.query.all()
+    if author and book and publisher:
+        return jsonify(
+            {"author": str(author), "books": str(book), "publisher": str(publisher)}
+        )
+    else:
+        return jsonify({"result": "AUTHOR NOT FIND"})
 
 
-@app.route('/add_article', methods=['GET', 'POST'])
+@app.route("/add_article", methods=["GET", "POST"])
 def add_article():
     if request.method == "POST":
         date = request.form["date"]
@@ -91,28 +97,30 @@ def add_article():
 
     return render_template("add_article.html")
 
-@app.route('/contact_us', methods=['GET', 'POST'])
+
+@app.route("/contact_us", methods=["GET", "POST"])
 def contact_us():
     form = ContactForm()
     if form.validate_on_submit():
-        return render_template('contact_success.html', form=form)
-    return render_template('contact_us.html', form=form)
+        return render_template("contact_success.html", form=form)
+    return render_template("contact_us.html", form=form)
 
-@app.route("/json", methods=['GET', 'POST'])
+
+@app.route("/json", methods=["GET", "POST"])
 def index():
-    if (request.method == 'POST'):
+    if request.method == "POST":
         some_json = request.get_json()
-        return jsonify({'you sent': some_json})
+        return jsonify({"you sent": some_json})
     else:
-        return jsonify({'about': 'Hello World'})
+        return jsonify({"about": "Hello World"})
 
-@app.route("/json/keliamieji/<int:metai>", methods=['GET'])
-def keliamieji(metai):
-    if True:
-        return jsonify({'result': "Keliamieji"})
+
+@app.route("/json/leap%years/<int:years>", methods=["GET"])
+def leap_years(years):
+    if is_year_leap(years):
+        return jsonify({"result": "LEAP YEAR"})
     else:
-        return jsonify({'result': "NE Keliamieji"})
-
+        return jsonify({"result": "NOT LEAP YEAR"})
 
 # @app.route('/contact_success', methods=['GET', 'POST'])
 # def contact_success():
@@ -120,4 +128,3 @@ def keliamieji(metai):
 #     if form.validate_on_submit():
 #         return render_template('contact_success.html', form=form)
 #     return render_template('contact_success')
-

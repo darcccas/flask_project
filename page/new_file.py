@@ -33,6 +33,9 @@ import json
 # dictionary2 = json.loads(r2.text)
 # print(dictionary2['result'])
 
-req = requests.get('http://127.0.0.1:5000/api/books/1')
-# data = req.json()
-# print(req)
+response = requests.get('http://127.0.0.1:5000/api/books/all')
+data = response.json()
+print(data)
+print(data["author"])
+print(data["books"])
+print(data["publisher"])

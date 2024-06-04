@@ -35,4 +35,3 @@ data = [
     Book("asdasd", "sdad", "sdaad", "sdasd", 25),
 ]
 
-print(data)
